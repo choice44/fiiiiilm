@@ -12,8 +12,9 @@ class ReviewListSerializer(serializers.ModelSerializer):
 class CreateReviewListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ("title", "content",)
+        fields = ("title", "content", "movie_code",)
 
+        
 class CommentListSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
 
@@ -24,6 +25,7 @@ class CommentListSerializer(serializers.ModelSerializer):
         model = Comment
         fields = "__all__"
 
+        
 class CreateCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
