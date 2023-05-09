@@ -5,17 +5,55 @@ from rest_framework.generics import get_object_or_404
 from rest_framework import status
 from reviews.models import Review
 from reviews.serializers import ReviewListSerializer, CreateReviewListSerializer
-import requests
-import json
+import requests, datetime
+# import json
 from django.http import JsonResponse
 # Create your views here.
 
+class MovieApiDetail(APIView):
+    def get(self, request):
+        # today = datetime.date.today() - datetime.timedelta(days=2)
+        # target_day = today.strftime('%Y%m%d')
+        url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+        }
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        results = []
+        for movie in data["results"][:10]:
+            results.append({
+                "id": movie["id"],
+                "title": movie["title"],
+                "genre_ids": movie["genre_ids"],
+                "original_title": movie["original_title"],
+                "overview": movie["overview"],
+                "poster_path": movie["poster_path"],
+                "release_date": movie["release_date"],
+                "vote_average": movie["vote_average"],
+            })
+        return JsonResponse(results,safe=False)
+
 class MovieApi(APIView):
     def get(self, request):
-        url = 'https://kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json?key=f5eef3421c602c6cb7ea224104795888&targetDt=20230501&weekGb=0'
-        response = requests.get(url)
+        url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+        }
+        response = requests.get(url, headers=headers)
         data = response.json()
-        return JsonResponse(data)
+        results = []
+        for movie in data["results"][:10]:
+            results.append({
+                # "id": movie["id"], # 필요하면추가
+                "title": movie["title"],
+                "original_title": movie["original_title"],
+                "poster_path": movie["poster_path"],
+            })
+        return JsonResponse(results,safe=False)
+
 
 class ReviewList(APIView):
     def get(self, request):
@@ -24,6 +62,8 @@ class ReviewList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        # id = request.data.get("id")
+        # movie_code = id
         serializer = CreateReviewListSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -64,3 +104,28 @@ class ReviewListDetail(APIView):
 
 class ReviewListRecent(APIView):
     pass
+
+
+class MovieDetailApi(APIView):
+    def get(self, request):
+        # today = datetime.date.today() - datetime.timedelta(days=2)
+        # target_day = today.strftime('%Y%m%d')
+        url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+        }
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        return JsonResponse(data)
+
+
+
+
+
+
+
+
+
+
+
