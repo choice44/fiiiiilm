@@ -35,7 +35,7 @@ class MovieApiDetail(APIView):
             })
         return JsonResponse(results,safe=False)
 
-class MovieApi(APIView):
+class MovieApiMain(APIView):
     def get(self, request):
         url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
         headers = {
