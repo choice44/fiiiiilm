@@ -17,7 +17,7 @@ class MovieApiDetail(APIView):
         url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
         headers = {
             "accept": "application/json",
-            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+            "Authorization": "Authorization: Bearer api_key"
         }
         response = requests.get(url, headers=headers)
         data = response.json()
@@ -40,7 +40,7 @@ class MovieApiMain(APIView):
         url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
         headers = {
             "accept": "application/json",
-            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+            "Authorization": "Authorization: Bearer api_key"
         }
         response = requests.get(url, headers=headers)
         data = response.json()
