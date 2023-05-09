@@ -3,12 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from rest_framework import status
-from reviews.models import Review
-from reviews.serializers import ReviewListSerializer, CreateReviewListSerializer
+from reviews.models import Review, Comment
+from reviews.serializers import ReviewListSerializer, CreateReviewListSerializer, CommentListSerializer, CreateCommentSerializer
 import requests, os
-# import json
 from django.http import JsonResponse
 # Create your views here.
+
 
 class MovieApiDetail(APIView):
     def get(self, request):
@@ -34,7 +34,7 @@ class MovieApiDetail(APIView):
             })
         return JsonResponse(results,safe=False)
 
-class MovieApi(APIView):
+class MovieApiMain(APIView):
     def get(self, request):
         API_KEY = os.environ.get('MOVIE_API_KEY')
         url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
@@ -53,6 +53,7 @@ class MovieApi(APIView):
                 "poster_path": movie["poster_path"],
             })
         return JsonResponse(results,safe=False)
+
 
 
 class ReviewList(APIView):
@@ -80,7 +81,7 @@ class ReviewListDetail(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(f'수정완료{serializer.data}', status=status.HTTP_200_OK)
-        
+
         # if request.user == review.user:
         #     serializer = CreateReviewListSerializer(review, data=request.data)
         #     if serializer.is_valid():
@@ -94,7 +95,7 @@ class ReviewListDetail(APIView):
     def delete(self, request, pk):
         review = get_object_or_404(Review, id=pk)
         review.delete()
-        return Response("삭제완료",status=status.HTTP_204_NO_CONTENT)
+        return Response("삭제완료", status=status.HTTP_204_NO_CONTENT)
         # if request.user == review.user:
         #     review.delete()
         #     return Response("삭제완료!",status=status.HTTP_204_NO_CONTENT)
@@ -106,26 +107,41 @@ class ReviewListRecent(APIView):
     pass
 
 
-class MovieDetailApi(APIView):
-    def get(self, request):
-        # today = datetime.date.today() - datetime.timedelta(days=2)
-        # target_day = today.strftime('%Y%m%d')
-        url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
-        }
-        response = requests.get(url, headers=headers)
-        data = response.json()
-        return JsonResponse(data)
+class CommentList(APIView):
+    def get(self, request, pk):
+        review = Review.objects.get(id=pk)
+        comments = review.comment_set.all()
+        serializer = CommentListSerializer(comments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, pk):
+        print(request.user)
+        serializer = CreateCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, id=pk)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CommentDetail(APIView):
 
+    def put(self, request, pk):
+        comment = get_object_or_404(Comment, id=pk)
+        if request.user == comment.user:
+            serializer = CreateCommentSerializer(comment, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("권한이 없습니다!", status=status.HTTP_403_FORBIDDEN)
 
-
-
-
-
-
-
-
+    def delete(self, request, pk):
+        comment = get_object_or_404(Comment, id=pk)
+        if request.user == comment.user:
+            comment.delete()
+            return Response("삭제되었습니다!", status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response("권한이 없습니다!", status=status.HTTP_403_FORBIDDEN)

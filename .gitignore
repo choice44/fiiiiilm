@@ -297,6 +297,7 @@ poetry.toml
 pyrightconfig.json
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -340,6 +341,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-.vscode
 test.py
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,python,visualstudiocode,django
