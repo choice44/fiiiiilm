@@ -5,19 +5,18 @@ from rest_framework.generics import get_object_or_404
 from rest_framework import status
 from reviews.models import Review
 from reviews.serializers import ReviewListSerializer, CreateReviewListSerializer
-import requests, datetime
+import requests, os
 # import json
 from django.http import JsonResponse
 # Create your views here.
 
 class MovieApiDetail(APIView):
     def get(self, request):
-        # today = datetime.date.today() - datetime.timedelta(days=2)
-        # target_day = today.strftime('%Y%m%d')
+        API_KEY = os.environ.get('MOVIE_API_KEY')
         url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
         headers = {
             "accept": "application/json",
-            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+            "Authorization": f"Bearer {API_KEY}",
         }
         response = requests.get(url, headers=headers)
         data = response.json()
@@ -37,10 +36,11 @@ class MovieApiDetail(APIView):
 
 class MovieApi(APIView):
     def get(self, request):
+        API_KEY = os.environ.get('MOVIE_API_KEY')
         url = "https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1&region=KR"
         headers = {
             "accept": "application/json",
-            "Authorization": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1NDY5MzJlNzcwMmRhYTFhZDkxNzkzMjc5NDhhNTI1MiIsInN1YiI6IjY0NTk5M2JkNzdkMjNiMDE3MDM3OWJlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RxIkcjItrFbcuOcM7ol71Vb_AY7uF1fTAmBoAONO89c"
+            "Authorization": f"Bearer {API_KEY}",
         }
         response = requests.get(url, headers=headers)
         data = response.json()
