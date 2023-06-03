@@ -1,6 +1,14 @@
+from django.test import TestCase
 from django.urls import reverse
+from faker import Faker
 from rest_framework.test import APITestCase
+from rest_framework import status
 from users.models import User
+from reviews.models import Review
+from reviews.serializers import ReviewSerializer
+
+# Create your tests here.
+
 
 
 # class ReviewsCreateTest(APITestCase):
@@ -32,3 +40,4 @@ from users.models import User
 #         )
 #         self.assertEqual(response.data["message"], "작성완료")
 #         self.assertEqual(response.status_code, 200)
+
